@@ -1,0 +1,49 @@
+FROM debian:bookworm-slim
+
+RUN apt update
+RUN apt upgrade -y
+WORKDIR /root/.lo
+ENV LO_HOME=/root/.lo
+ENV C=gcc
+ENV CC=g++
+RUN apt install -y g++ make curl
+RUN curl -L -o lo.gz https://github.com/just-js/lo/releases/download/0.0.5-pre/lo-linux-x64.gz
+RUN gunzip lo.gz
+RUN chmod +x lo
+RUN apt install -y libcurl4-openssl-dev
+RUN ./lo build -v
+RUN ./lo build binding core
+RUN ./lo build binding curl
+RUN ./lo build binding encode
+RUN ./lo build binding epoll
+RUN ./lo build binding inflate
+RUN apt install -y libffi-dev
+RUN ./lo build binding libffi
+RUN apt install -y libssl-dev
+RUN ./lo build binding libssl
+RUN apt install -y liblz4-dev
+RUN ./lo build binding lz4
+RUN apt install -y python3 python3-jsonschema python3-jinja2
+RUN ./lo build binding mbedtls
+RUN ./lo build binding net
+RUN ./lo build binding pico
+RUN ./lo build binding pthread
+RUN apt install -y librsync-dev
+RUN ./lo build binding rsync
+RUN apt install -y libseccomp-dev
+RUN ./lo build binding seccomp
+RUN apt install -y libsqlite3-dev
+RUN ./lo build binding sqlite
+RUN ./lo build binding system
+RUN apt install -y libtcc-dev
+RUN ./lo build binding tcc
+RUN ./lo build binding wireguard
+RUN apt install -y zlib1g-dev
+RUN ./lo build binding zlib
+RUN apt install -y python3
+RUN ./lo build binding duckdb
+
+RUN apt autoremove
+RUN apt clean all
+
+CMD ["/bin/bash"]
