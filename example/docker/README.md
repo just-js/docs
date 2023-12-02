@@ -1,3 +1,5 @@
+# docker image for running lo with all bindings compiled
+
 This is a Dockerfile which we will use to 
 - download latest lo release or download the lo source
 - build lo locally
