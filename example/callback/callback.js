@@ -1,13 +1,11 @@
 import { Assembler, address_as_bytes } from 'lib/asm.js'
 import { bind } from 'lib/ffi.js'
-import { mem } from 'lib/proc.js'
+import { exec, mem } from 'lib/proc.js'
+import { isFile } from 'lib/fs.js'
 
 const { ptr, core, colors, hrtime, nextTick, assert, registerCallback } = lo
-const { AM, AD, AG, AY, AC } = colors
+const { AD, AG, AY, AC } = colors
 const { dlopen, dlsym } = core
-
-// linux: gcc -fPIC -O3 -s -shared -o callback.so callback.c
-// macos: clang -fPIC -O3 -s -dynamiclib -o callback.so callback.c
 
 function js_callback (counter) {
   counter += 1
@@ -28,6 +26,11 @@ function js_callback (counter) {
 
 function callback () {
   u32[4] = js_callback(u32[6])
+}
+
+if (!isFile('./callback.so')) {
+  const compiler = core.os === 'linux' ? 'gcc' : 'clang'
+  assert(exec(compiler, ['-fPIC', '-O3', '-s', '-shared', '-o', 'callback.so', 'callback.c'])[0] === 0)
 }
 
 const handle = assert(dlopen('./callback.so', 1))

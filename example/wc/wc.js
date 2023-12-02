@@ -1,5 +1,5 @@
 /*
-taskset --cpu-list 0 dd status=none if=/dev/zero bs=65536 count=1000000 | taskset --cpu-list 1 lo util/bench/wc.js
+nice -n 20 taskset --cpu-list 0 dd status=none if=/dev/zero bs=65536 count=1000000 | nice -n 20 taskset --cpu-list 1 lo wc.js
 */
 const { read } = lo.core
 const buf = new Uint8Array(65536)
