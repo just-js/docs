@@ -7,11 +7,21 @@ ENV LO_HOME=/root/.lo
 ENV C=gcc
 ENV CC=g++
 RUN apt install -y g++ make curl
-RUN curl -L -o lo.gz https://github.com/just-js/lo/releases/download/0.0.5-pre/lo-linux-x64.gz
+RUN apt install -y libcurl4-openssl-dev
+
+## build from source
+#RUN apt install -y git
+#RUN git clone --depth 1 --single-branch -b 0.0.7-pre https://github.com/just-js/lo.git .
+#RUN make v8/include
+#RUN make v8/libv8_monolith.a
+#RUN make C="gcc" CC="g++" lo
+
+## download the binary
+RUN curl -L -o lo.gz https://github.com/just-js/lo/releases/download/0.0.7-pre/lo-linux-x64.gz
 RUN gunzip lo.gz
 RUN chmod +x lo
-RUN apt install -y libcurl4-openssl-dev
 RUN ./lo build -v
+
 RUN ./lo build binding core
 RUN ./lo build binding curl
 RUN ./lo build binding encode
@@ -28,8 +38,6 @@ RUN ./lo build binding mbedtls
 RUN ./lo build binding net
 RUN ./lo build binding pico
 RUN ./lo build binding pthread
-RUN apt install -y librsync-dev
-RUN ./lo build binding rsync
 RUN apt install -y libseccomp-dev
 RUN ./lo build binding seccomp
 RUN apt install -y libsqlite3-dev
@@ -40,10 +48,14 @@ RUN ./lo build binding tcc
 RUN ./lo build binding wireguard
 RUN apt install -y zlib1g-dev
 RUN ./lo build binding zlib
-RUN apt install -y python3
+RUN apt install -y python3 git
 RUN ./lo build binding duckdb
 
-RUN apt autoremove
+RUN apt remove -y python3 python3-jsonschema python3-jinja2 git make
+RUN apt autoremove -y
 RUN apt clean all
+
+ENV PATH="$PATH:$LO_HOME"
+WORKDIR /app
 
 CMD ["/bin/bash"]
