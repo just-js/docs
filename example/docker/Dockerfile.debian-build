@@ -11,13 +11,13 @@ RUN apt install -y libcurl4-openssl-dev
 
 ## build from source
 #RUN apt install -y git
-#RUN git clone --depth 1 --single-branch -b 0.0.7-pre https://github.com/just-js/lo.git .
+#RUN git clone --depth 1 --single-branch -b 0.0.8-pre https://github.com/just-js/lo.git .
 #RUN make v8/include
 #RUN make v8/libv8_monolith.a
 #RUN make C="gcc" CC="g++" lo
 
 ## download the binary
-RUN curl -L -o lo.gz https://github.com/just-js/lo/releases/download/0.0.7-pre/lo-linux-x64.gz
+RUN curl -L -o lo.gz https://github.com/just-js/lo/releases/download/0.0.8-pre/lo-linux-x64.gz
 RUN gunzip lo.gz
 RUN chmod +x lo
 RUN ./lo build -v
