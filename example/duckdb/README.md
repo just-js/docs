@@ -31,7 +31,7 @@ cd $LO_HOME
 download lo
 
 ```
-curl -L -o lo.gz https://github.com/just-js/lo/releases/download/0.0.8-pre/lo-linux-x64.gz
+curl -L -o lo.gz https://github.com/just-js/lo/releases/download/0.0.9-pre/lo-linux-x64.gz
 ```
 
 extract and change permissions

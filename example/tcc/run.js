@@ -18,7 +18,7 @@ import('lib/curl.js')
       const home_path = `${LO_HOME}/${specifier}`
       if (isFile(home_path)) return decoder.decode(readFile(home_path))
       return new Promise (resolve => {
-        const url = `https://raw.githubusercontent.com/just-js/lo/0.0.8-pre/${specifier}`
+        const url = `https://raw.githubusercontent.com/just-js/lo/0.0.9-pre/${specifier}`
         console.log(`fetching ${url}`)
         fetch(url, '/dev/shm/gen.js')
         const src = decoder.decode(readFile('/dev/shm/gen.js'))
