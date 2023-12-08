@@ -7,11 +7,12 @@ ENV LO_HOME=/root/.lo
 ENV C=gcc
 ENV CC=g++
 RUN apt install -y g++ make curl
+# libcurl is a temporary dependency until we have our own fetch working
 RUN apt install -y libcurl4-openssl-dev
 
 ## build from source
 RUN apt install -y git
-RUN git clone --depth 1 --single-branch -b 0.0.9-pre https://github.com/just-js/lo.git .
+RUN git clone --depth 1 --single-branch -b 0.0.10-pre https://github.com/just-js/lo.git .
 RUN make v8/include
 RUN make v8/libv8_monolith.a
 RUN make C="gcc" CC="g++" lo
@@ -48,8 +49,8 @@ RUN ./lo build binding tcc
 RUN ./lo build binding wireguard
 RUN apt install -y zlib1g-dev
 RUN ./lo build binding zlib
-RUN apt install -y python3 git
-RUN ./lo build binding duckdb
+#RUN apt install -y python3 git
+#RUN ./lo build binding duckdb
 
 RUN apt remove -y python3 python3-jsonschema python3-jinja2 git make
 RUN apt autoremove -y
