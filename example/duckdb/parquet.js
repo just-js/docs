@@ -45,6 +45,7 @@ const conn = assert(addr(conn_ptr))
 const res = ptr(new Uint8Array(struct_duckdb_result_size))
 const res_ptr = res.ptr
 
+assert(query(conn, 'INSTALL parquet;', res_ptr) === DuckDBSuccess), () => to_string(assert(result_error(res_ptr)))
 assert(query(conn, 'LOAD parquet;', res_ptr) === DuckDBSuccess), () => to_string(assert(result_error(res_ptr)))
 
 function prepare_stmt (sql) {
