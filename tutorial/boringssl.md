@@ -42,6 +42,7 @@ mkdir lib/boringssl/deps
 cd lib/boringssl/deps
 curl -L -o boringssl.tar.gz https://codeload.github.com/google/boringssl/tar.gz/master
 tar -xf boringssl.tar.gz
+mv boringssl_master boringssl
 cd boringssl
 cmake -B build
 make -C build -j 4
