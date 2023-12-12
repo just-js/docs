@@ -34,6 +34,9 @@ make C=gcc CC=g++ cleanall lo
 
 #### download and build boringssl libraries
 
+we will replace this with a ```lib/boringssl/build.js``` script later on
+
+
 ```shell
 mkdir lib/boringssl/deps
 cd lib/boringssl/deps
@@ -110,7 +113,7 @@ ensure you are in the lo directory where you downloaded and installed lo
 ls -lah lib/boringssl/*.so
 ```
 
-you should now see the shared library in lib/boringssl/boringssl.so
+you should now see the shared library in ```lib/boringssl/boringssl.so```
 
 ### test the bindings
 
@@ -245,6 +248,20 @@ and you should see something like this
     X509_sign: Function (0)
     X509_time_adj_ex: Function (0)
 ```
+
+with these bindings you can just take the example [here](https://github.com/just-js/lo-bench/blob/main/http/https-lo.js), and replace
+
+```JavaScript
+const { libssl } = lo.load('libssl')
+```
+
+with
+
+```JavaScript
+const libssl = lo.load('boringssl').boringssl
+```
+
+and everything *should* just work! =)
 
 ## build lo from scratch on mac
 
