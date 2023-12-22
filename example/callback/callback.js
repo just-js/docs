@@ -42,6 +42,7 @@ const asm = new Assembler()
 const nArgs = 1
 const ctx = ptr(new Uint8Array(((nArgs + 3) * 8)))
 const u32 = new Uint32Array(ctx.buffer)
+
 const callback_address = assert(dlsym(0, 'lo_callback'))
 assert(callback_address)
 registerCallback(ctx.ptr, callback)
