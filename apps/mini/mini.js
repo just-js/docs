@@ -34,7 +34,7 @@ const rusage = wrap_rusage()
 
 const boot = hrtime() - lo.start
 
-while (1) {
+//while (1) {
   lo.print(`${AG}boot${AD} ${boot} ${AM}pid${AD} ${getpid()} ${AY}rss${AD} ${rusage()[0]}\n`)
-  core.sleep(1)
-}
+//  core.sleep(1)
+//}

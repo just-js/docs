@@ -1,7 +1,8 @@
 const bindings = [
   'core', 
   'epoll',
-  'webui'
+  'webui',
+  'system'
 ]
 
 const libs = [
@@ -14,7 +15,7 @@ const libs = [
 const embeds = []
 
 const target = 'webui' 
-const link_type = '-rdynamic'
+const link_type = '-rdynamic -static-libstdc++ -static-libgcc'
 const opt = '-O3 -march=native -mtune=native'
 const v8_opts = {
   v8_cleanup: 0, v8_threads: 2, on_exit: 0,

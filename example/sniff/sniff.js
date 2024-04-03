@@ -46,8 +46,10 @@ while (bytes > 0) {
   if (frame.protocol === 'IPv4' && header.protocol === protocols.TCP) {
     const [source, dest] = [b2ipv4(header.source), b2ipv4(header.dest)] // convert source and dest ip to human-readable
     if (source === ip || dest === ip) {
-      console.log(`\n${tcpDump(packet)}`)
-      if (bytes > offset) console.log(dump(u8.slice(offset, bytes)), false)
+      if (source === '4.208.26.199' || dest === '4.208.26.199') {
+        console.log(`\n${tcpDump(packet)}`)
+        if (bytes > offset) console.log(dump(u8.slice(offset, bytes)), false)
+      }
     } else {
       //console.log(`${AM}Eth  ${AD}: ${AM}${toMAC(frame.source)}${AD} -> ${AM}${toMAC(frame.dest)}${AD}`)
       //console.log(dump(u8.slice(0, bytes)), false)

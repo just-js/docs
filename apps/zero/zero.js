@@ -1,0 +1,1 @@
+lo.print(`hello\n`)
