@@ -1,11 +1,13 @@
-import { spawn, join } from 'lib/thread.js'
+import { spawn, join, try_join, pthread } from 'lib/thread.js'
 import { Assembler, Compiler, Registers } from 'lib/asm/asm.js'
-import * as tcc from 'lib/tcc.js'
 import { dump } from 'lib/binary.js'
+import { is_file } from 'lib/fs.js'
+import { exec } from 'lib/proc.js'
 
 const { 
-  assert, ptr, wrap_memory, utf8_encode_into_ptr
+  assert, core, ptr, wrap_memory, unwrap_memory, cstr, utf8_encode_into_ptr
 } = lo
+const { dlsym, dlopen } = core
 const { rdi, rsi, rdx, rbx } = Registers
 
 class FileReader {
@@ -73,28 +75,13 @@ function bench (file_name, concurrent) {
 const MAX_PATH = 4096
 const FREE_ON_RELEASE = 1
 
-const c_compiler = new tcc.Compiler()
-c_compiler.compile(`
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <stdint.h>
-
-int read_file (const char* pathname, struct stat* st, char** ptr) {
-  int fd = open(pathname, O_RDONLY);
-  if (fd == -1) return -1;
-  if(fstat(fd, st) != 0) return -1;
-  char* buf = (char*)malloc(st->st_size);
-  int bytes = read(fd, buf, st->st_size);
-  close(fd);
-  ptr[0] = buf;
-  return bytes;
+if (!is_file('./read_file.so')) {
+  const compiler = core.os === 'linux' ? 'gcc' : 'clang'
+  assert(exec(compiler, ['-fPIC', '-O3', '-s', '-shared', '-o', 'read_file.so', 'read_file.c'])[0] === 0)
 }
-`)
 
-const sym = assert(c_compiler.symbol('read_file'))
+const handle = assert(dlopen('./read_file.so', 1))
+const sym = assert(dlsym(handle, 'read_file'))
 const asm = new Assembler()
 /*
 we could take any of the bindings defined functions and call them on a thread
@@ -123,7 +110,7 @@ asm.ret()
 const compiler = new Compiler()
 const thread_func = compiler.compile(asm.bytes())
 
-const file_name = lo.args[2] || lo.args[1]
+const file_name = lo.args[2] || './read_file.c'
 const concurrent = parseInt(lo.args[3] || '10', 10)
 const reader = new FileReader()
 reader.read(file_name)
