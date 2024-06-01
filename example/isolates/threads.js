@@ -88,9 +88,8 @@ for (let i = 0; i < iter; i++) {
   bench.start('isolate_start')
   for (let j = 0; j < runs; j++) {
     waitfor()
-    assert(buf[0] === 255)
   }
-  console.log(dump(buf))
+//  console.log(dump(buf))
   bench.end(runs)
 }
 

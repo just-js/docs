@@ -2,3 +2,6 @@ hello
 hello.config.js
 hello.js
 lib
+scratch
+*.c
+*.h

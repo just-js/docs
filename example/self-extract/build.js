@@ -107,13 +107,15 @@ function compress (app_name) {
   const lib = lo.load('zlib')
   if (!lib) {
     console.error('zlib binding not found, using system gzip program')
-    assert(exec('gzip', ['-f', `-${Math.abs(compression_level)}`, app_name])[0] === 0)
+    assert(exec('gzip', ['-f', `-${Math.abs(compression_level)}`, 
+      app_name])[0] === 0)
     return
   }
   const { zlib } = lib
-  const src = read_file('hello')
+  const src = read_file(app_name)
   const dest = new Uint8Array(src.length)
-  write_file(`${app_name}.gz`, dest.subarray(0, zlib.deflate(src, src.length, dest, dest.length, compression_level)))
+  write_file(`${app_name}.gz`, dest.subarray(0, zlib.deflate(src, src.length, 
+    dest, dest.length, compression_level)))
 }
 
 /**
@@ -121,34 +123,36 @@ function compress (app_name) {
 * @param app_name { string } the name of the app (without extension)
 */
 function pack (app_name) {
-  // create the c source file for the wrapper application
+  // create the c source file for the wrapper program
   write_file(`wrapper.c`, create_c_wrapper(app_name))
   // create the assembly file to link in the compressed program
   write_file(`_binary.S`, create_assembly_file(app_name))
   // compress the program
   compress(app_name)
-  // create the object file from the compressed program which can be linked into the wrapper
+  // create the object file from the compressed program which can be linked into#
+  // the wrapper
   assemble('-c', '-o', '_binary.o', '_binary.S')
   // compile the gzip inflate object file
   compile('-I.', '-c', '-o', 'em_inflate.o', '-O3', 'em_inflate.c')
-  // compiler the wrapper program object file
+  // compile the wrapper program object file
   compile('-D_GNU_SOURCE', '-c', '-o', 'wrapper.o', '-O3', 'wrapper.c')
   // link everything into the wrapper program, overwriting the original
-  compile('-O3', '-s', '-o', app_name, '_binary.o', 'em_inflate.o', 'wrapper.o')
+  compile('-O3', '-o', app_name, '_binary.o', 'em_inflate.o', 'wrapper.o')
 }
 
 /**
 * download the zlib inflate source we will link into the wrapper program
 * @param prefix { string } ["https://raw.githubusercontent.com/emmanuel-marty/em_inflate/master/lib"] the url prefix to download from
 */
-function setup (prefix = 'https://raw.githubusercontent.com/emmanuel-marty/em_inflate/master/lib') {
+function setup (prefix = 
+  'https://raw.githubusercontent.com/emmanuel-marty/em_inflate/master/lib') {
   if (!is_file('em_inflate.h')) fetch(`${prefix}/em_inflate.h`, 'em_inflate.h')
   if (!is_file('em_inflate.c')) fetch(`${prefix}/em_inflate.c`, 'em_inflate.c')
 }
 
 const encoder = new TextEncoder()
 // pass in the program name. lo will expect a `${app_name}.js` to exist
-const app_name = args[2] || 'hello'
+const app_name = args[1] || 'hello'
 // we can override the c compiler with a CC env var
 const cc = (getenv('CC') || 'gcc').split(' ')
 // we can override the assembler with an AS env var

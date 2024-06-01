@@ -13,12 +13,11 @@ import('lib/curl.js')
     fetch = mod.fetch
 
     core.loader = specifier => {
-      if (specifier === './callback.js') return
       if (isFile(specifier)) return
       const home_path = `${LO_HOME}/${specifier}`
       if (isFile(home_path)) return decoder.decode(readFile(home_path))
       return new Promise (resolve => {
-        const url = `https://raw.githubusercontent.com/just-js/lo/0.0.9-pre/${specifier}`
+        const url = `https://raw.githubusercontent.com/just-js/lo/${lo.version.lo}/${specifier}`
         console.log(`fetching ${url}`)
         fetch(url, '/dev/shm/gen.js')
         const src = decoder.decode(readFile('/dev/shm/gen.js'))

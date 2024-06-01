@@ -39,6 +39,7 @@ assert(bind(fd, sockaddr, sockaddr.length) === 0)
 const BUFSIZE = 65536
 const u8 = new Uint8Array(BUFSIZE)
 const { parse } = new Parser(u8)
+const filter_ip = lo.args[3]
 let bytes = recv(fd, u8, BUFSIZE, 0)
 while (bytes > 0) {
   const packet = parse(bytes, true)
@@ -46,7 +47,7 @@ while (bytes > 0) {
   if (frame.protocol === 'IPv4' && header.protocol === protocols.TCP) {
     const [source, dest] = [b2ipv4(header.source), b2ipv4(header.dest)] // convert source and dest ip to human-readable
     if (source === ip || dest === ip) {
-      if (source === '4.208.26.199' || dest === '4.208.26.199') {
+      if (!filter_ip || (source === filter_ip || dest === filter_ip)) {
         console.log(`\n${tcpDump(packet)}`)
         if (bytes > offset) console.log(dump(u8.slice(offset, bytes)), false)
       }

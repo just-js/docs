@@ -32,5 +32,6 @@ registerCallback(ctx.ptr, () => calls++)
 const start = Date.now()
 callmulti(callback_address, ctx.ptr)
 const elapsed = Date.now() - start
-console.log(calls)
-console.log(calls / (elapsed / 1000))
+const rate = Math.floor(calls / (elapsed / 1000))
+const nanos = Math.floor((1 / rate) * 1e9)
+console.log(`${calls} calls in ${elapsed} ms, rate = ${rate}, ns/iter = ${nanos}`)
