@@ -3,3 +3,6 @@ scratch
 *.cpio
 vmlinux
 *.parquet
+*.o
+*.a
+*.so

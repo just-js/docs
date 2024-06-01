@@ -1,0 +1,7 @@
+avx
+count
+test.log
+*.a
+*.cc
+*.o
+*.so

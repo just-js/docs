@@ -5,3 +5,11 @@ lib
 scratch
 *.c
 *.h
+build
+bzImage
+firecracker
+vmm
+vmm.config.js
+vmm.js
+vmm2.js
+
