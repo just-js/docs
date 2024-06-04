@@ -27,7 +27,7 @@ function count_chars (file_name) {
 
 const len = 2 * 1024 * 1024
 const buf_ptr = create_buffer(len)
-const file_name = lo.args[2] || '/dev/shm/test.log'
+const file_name = lo.args[lo.args[0] === 'lo' ? 2 : 1] || '/dev/shm/test.log'
 const expected = count_chars(file_name)
 console.log(expected)
 
