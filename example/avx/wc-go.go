@@ -7,7 +7,6 @@ import (
 	"os"
 	"io"
 	"bytes"
-	"time"
 )
 
 func lineCounter(r io.Reader) (int, error) {
@@ -40,26 +39,16 @@ func count_lines_in_file (filename string) (int, error) {
 }
 
 func main() {
-	filename := os.Args[1]
+	var (
+		filename string
+	)
+	filename = "/dev/shm/test.log"
+	if (len(os.Args) > 1) {
+		filename = os.Args[1]
+	}
 	expected, err := count_lines_in_file(filename)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
-	fmt.Printf("The file has %d lines\n", expected)
-	runs := 10
-	for true {
-		start := time.Now()
-		for i := 1; i < runs; i++ {
-			lines, err := count_lines_in_file(filename)
-			if err != nil {
-				log.Fatalf("Error: %v", err)
-			}
-			if lines != expected {
-				log.Fatalf("line count is incorrect")
-			}
-		}
-		elapsed := time.Since(start)
-		rate := float64(runs) / elapsed.Seconds()
-		log.Printf("time %s rate %f", elapsed, rate)
-	}
+	fmt.Printf("%d\n", expected)
 }

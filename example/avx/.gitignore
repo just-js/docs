@@ -5,3 +5,7 @@ test.log
 *.cc
 *.o
 *.so
+lib/core
+wc
+wc-lo
+wc-go
