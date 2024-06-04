@@ -1,0 +1,5 @@
+*.zip
+*.so
+*.a
+commit-sha
+*.h
