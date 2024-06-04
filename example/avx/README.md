@@ -10,6 +10,7 @@ lo build binding memcount
 https://lemire.me/blog/2017/02/14/how-fast-can-you-count-lines/
 https://x.com/t3dotgg/status/1796689128207368687
 
+gcc -D_GNU_SOURCE -std=c99 -static -s -O3 -o count-c count.c -march=native -mtune=native
 
 create an 8GB test file
 
