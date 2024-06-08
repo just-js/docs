@@ -1,3 +1,31 @@
+uname -a
+cat /proc/cpuinfo | grep "model name" | head -n 1
+dmidecode --type 17
+lo --version
+bun --version
+deno --version
+node --version
+go version
+
+
+docker build -t linecount-bench -f docker/Dockerfile docker
+docker run -it --rm -v $(pwd):/bench --privileged --shm-size=8192m linecount-bench /bin/bash
+
+lo build runtime count
+lo build runtime wc
+lo create_test_file.js /dev/shm/test.log $((1024 * 1024 * 1024))
+gcc -D_GNU_SOURCE -std=c99 -static -s -O3 -o count count.c -march=native -mtune=native
+gcc -D_GNU_SOURCE -std=c99 -static -s -O3 -o wc wc.c -march=native -mtune=native
+GOAMD64=v2 go build count-go.go
+GOAMD64=v2 go build wc-go.go
+
+
+nice -n -20 taskset --cpu-list 2,3 hyperfine --export-json results.json "wc -l /dev/shm/test.log" "./wc" "./wc-lo" "./wc-go" "lo wc.js" "node wc-node.js" "node wc-node-sync.js" "bun wc-node.js" "bun wc-node-sync.js" "bun wc-bun.js" "deno run -A wc-deno.js" "deno run -A wc-deno-sync.js" 2>/dev/null
+
+nice -n -20 taskset --cpu-list 2,3 poop "wc -l /dev/shm/test.log" "./wc" "./wc-lo" "./wc-go" "lo wc.js" "node wc-node.js" "node wc-node-sync.js" "bun wc-node.js" "bun wc-node-sync.js" "bun wc-bun.js" "deno run -A wc-deno.js" "deno run -A wc-deno-sync.js" 2>/dev/null
+
+
+
 an example using avx2 and sse2 to find count of a character in a file. should be optimally performant.
 
 lo create_test_file.js /dev/shm/test.log $(calc "8 * 1024 * 1024 * 1024")

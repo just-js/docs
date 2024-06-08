@@ -1,3 +1,5 @@
+import { measure } from './lib/bench.mjs'
+
 const { memcount } = lo.load('memcount')
 const { core, assert } = lo
 const { count_avx } = memcount
@@ -32,7 +34,7 @@ const expected = count_chars(file_name)
 console.log(expected)
 
 while (1) {
-  const start = lo.hrtime()
+  measure.start()
   assert(count_chars(file_name) === expected)
-  console.log(`time ${lo.hrtime() - start} ns`)
+  measure.log()
 }

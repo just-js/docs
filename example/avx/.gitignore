@@ -9,5 +9,7 @@ lib/core
 wc
 wc-lo
 wc-go
-count-c
 count-lo
+count-go
+.lo
+tlc

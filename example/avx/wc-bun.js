@@ -11,8 +11,9 @@ function on_chunk (chunk) {
   }
 }
 
-require('fs').createReadStream(process.argv[2] || '/dev/shm/test.log', { highWaterMark: 2 * 1024 * 1024 })
-  .on('data', on_chunk)
-  .on('end', function() {
-    console.log(count);
-  });
+const file = Bun.file(process.argv[2] || '/dev/shm/test.log');
+const stream = file.stream();
+for await (const chunk of stream) {
+  on_chunk(chunk)
+}
+console.log(count);

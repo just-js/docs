@@ -18,6 +18,8 @@ static inline uint64_t getns(void)
   return (((uint64_t)ts.tv_sec) * 1000000000ULL) + ts.tv_nsec;
 }
 
+// https://gist.github.com/powturbo/2b06a84b6008dfffef11e53edba297d3
+
 size_t avxcountu3(const char *ss, size_t n)
 {
   int c = 10;
