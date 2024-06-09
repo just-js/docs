@@ -175,16 +175,17 @@ class Bench {
   end (count = 0) {
     this.#end = performance.now()
     const elapsed = this.#end - this.#start
-    const rate = Math.floor(count / (elapsed / 1000))
-    const nanos = Math.ceil((1000000000 / rate) * 100) / 100
+    const nanos = Math.floor(elapsed * 1000000)
+    const seconds = nanos / 1000000000
+    const rate = Math.floor(count / seconds)
     const rss = mem()
-    //if (this.#display) console.log(`${this.#name} ${pad(Math.floor(elapsed), 6)} ms ${AG}rate${AD} ${pad(rate, 10)} ${formatNanos(nanos)} ${AG}rss${AD} ${rss}`)
-    let [ usr, , sys ] = cputime()
-    const cpu_time = elapsed / 10
-    usr = Math.floor((usr / cpu_time) * 100)
-    sys = Math.floor((sys / cpu_time) * 100)
-    const rate_pc = Math.ceil(rate * 100 / (usr + sys))
-    if (this.#display) console.log(`${AM}${this.#name.trim().padEnd(this.#name_width, ' ')}${AD} ${AY}time${AD} ${Math.floor(elapsed)} ${AY}rate${AD} ${rate} ${AM}rate/core${AD} ${rate_pc} ${AG}ns/iter${AD} ${nanos.toFixed(2)} ${AG}rss${AD} ${rss} ${AY}usr${AD} ${usr.toString().padStart(3, ' ')} ${AY}sys${AD}  ${sys.toString().padStart(3, ' ')} ${AY}tot${AD} ${(usr + sys).toString().padStart(3, ' ')}`)
+    const cpu = cputime()
+    const usr = Math.floor((cpu[0] / seconds) * 100)
+    const sys = Math.floor((cpu[1] / seconds) * 100)
+    const total = Math.floor(((cpu[0] + cpu[1]) / seconds) * 100 )
+    const rate_pc = Math.ceil(rate / (total / 100))
+    const ns_iter = Math.floor((nanos / count) * 100) / 100
+    if (this.#display) console.log(`${AM}${this.#name.trim().padEnd(this.#name_width, ' ')}${AD} ${AY}time${AD} ${Math.floor(elapsed)} ${AY}rate${AD} ${rate} ${AM}rate/core${AD} ${rate_pc} ${AG}ns/iter${AD} ${ns_iter.toFixed(2)} ${AG}rss${AD} ${rss} ${AY}usr${AD} ${usr.toString().padStart(3, ' ')} ${AY}sys${AD}  ${sys.toString().padStart(3, ' ')} ${AY}tot${AD} ${total.toString().padStart(3, ' ')}`)
     return { name: this.#name.trim(), count, elapsed, rate, nanos, rss, runtime, usr, sys, rate_pc }
   }
 }

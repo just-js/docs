@@ -8,6 +8,10 @@ const api = {
     parameters: ['pointer', 'i32', 'u32'],
     result: 'u32',
     name: 'memcount_sse2'
+  },
+  test: {
+    parameters: [],
+    result: 'i32'
   }
 }
 
@@ -61,6 +65,9 @@ size_t memcount_sse2(const void *s, int c, size_t n) {
     return count;
 }
 
+int test () {
+  return 1;
+}
 `
 
 const name = 'memcount'

@@ -6,3 +6,4 @@ vmlinux
 *.o
 *.a
 *.so
+.vscode

@@ -47,6 +47,8 @@ RUN chown -R root:root /root/.node/
 RUN chown -R root:root /root/.bun/
 RUN chmod +x /usr/local/bin/poop
 
+RUN npm install -g node-gyp
+
 # add paths to installed apps
 ENV LO_HOME="/root/.lo"
 ENV PATH="/root/.node/bin:/root/.bun/bin:/root/.lo/bin:/root/.deno/bin:$PATH" 
