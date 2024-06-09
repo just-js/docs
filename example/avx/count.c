@@ -7,8 +7,59 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <time.h>
+#include <errno.h>
+#include <signal.h>
+#include <string.h>
+
+#define AD "\e[0;0m"
+#define AY "\e[0;33m"
+#define AG "\e[0;32m"
+#define AM "\e[0;35m"
 
 char* buf = 0;
+
+void process_memory_usage(unsigned long *rss, unsigned long *usr, unsigned long *sys) {
+  char buf[1024];
+  const char* s = NULL;
+  ssize_t n = 0;
+  int fd = 0;
+  int i = 0;
+  do {
+    fd = open("/proc/thread-self/stat", O_RDONLY);
+  } while (fd == -1 && errno == EINTR);
+  if (fd == -1) return;
+  do
+    n = read(fd, buf, sizeof(buf) - 1);
+  while (n == -1 && errno == EINTR);
+  close(fd);
+  if (n == -1)
+    return;
+  buf[n] = '\0';
+  s = strchr(buf, ' ');
+  if (s == NULL)
+    goto err;
+  s += 1;
+  if (*s != '(')
+    goto err;
+  s = strchr(s, ')');
+  if (s == NULL)
+    goto err;
+  for (i = 1; i <= 22; i++) {
+    s = strchr(s + 1, ' ');
+    if (s == NULL)
+      goto err;
+    if (i == 12) {
+      *usr = (strtoul(s, NULL, 10));
+    }
+    if (i == 13) {
+      *sys = (strtoul(s, NULL, 10));
+    }
+    if (i == 22) {
+      *rss = (strtoul(s, NULL, 10) * (unsigned long)getpagesize()) / 1024;
+    }
+  }
+err:
+}
 
 static inline uint64_t getns(void)
 {
@@ -51,7 +102,7 @@ size_t avxcountu3(const char *ss, size_t n)
 
 int count_lines(const char *filename)
 {
-  int fd = open(filename, O_RDWR);
+  int fd = open(filename, O_RDONLY);
   assert(fd > 2);
   size_t bytes = read(fd, buf, 2 * 1024 * 1024);
   int count = 0;
@@ -72,10 +123,20 @@ int main(int argc, char **argv)
   assert(madvise(buf, 2 * 1024 * 1024, MADV_HUGEPAGE) == 0);
   size_t expected = count_lines(filename);
   printf("%lu\n", expected);
+  unsigned long rss = 0;
+  unsigned long usr = 0;
+  unsigned long sys = 0;
   while (1)
   {
     uint64_t start = getns();
     assert(count_lines(filename) == expected);
-    fprintf(stderr, "time %lu ns\n", getns() - start);
+    uint64_t elapsed = getns() - start;
+    float seconds = elapsed / 1000000000;
+    float usr_pc = usr / seconds;
+    float sys_pc = sys / seconds;
+    float tot_pc = (usr + sys) / seconds;
+    unsigned long cpu_time = elapsed * tot_pc;
+    process_memory_usage(&rss, &usr, &sys);
+    fprintf(stderr, "%stime%s %lu ns %scputime%s %lu %srss%s %lu KB\n", AY, AD, elapsed, AY, AD, cpu_time, AG, AD, rss);
   }
 }

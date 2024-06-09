@@ -1,3 +1,185 @@
+# Benchmarking Line Counting in JS versus Go/C/Python
+
+
+
+## build the docker image
+
+```shell
+docker build -t linecount-bench -f docker/Dockerfile docker
+```
+
+## run a docker container
+
+next, we will create an instance of the docker image we created and run
+it with the current directory mounted.
+
+we will also specify privileged mode to avoid any extra overhead introduced
+by docker security features. it makes a small difference for micro-benches.
+
+we will also allocate 8GB of shared memory on /dev/shm inside the container
+so we have enough space to create our test files for the benchmarks.
+
+```shell
+docker run -it --rm -v $(pwd):/bench --privileged --shm-size=8192m linecount-bench /bin/bash
+```
+
+from now on, the commands we show will be run inside this docker container shell.
+
+
+## preparation/building
+
+first, we will compile the benchmark programs that need to be compiled.
+
+### build the lo count program
+
+```shell
+lo build runtime count
+```
+
+```shell
+creating /root/.lo/v8/include
+download v8 includes for version 12.4
+downloaded include.tar.gz size 272887
+creating /root/.lo/v8/libv8_monolith.a
+download v8 static lib for version 12.4
+downloaded libv8_monolith-linux-x64.a.gz size 22302108
+create builtins
+create main header
+compile builtins
+compile main.cc
+compile lo.cc
+link runtime 
+create  lib/core/core.cc
+change dir to  lib/core
+compile core.cc with g++
+static lib  core.a
+change dir to  /bench
+create  lib/memcount/memcount.cc
+change dir to  lib/memcount
+compile memcount.cc with g++
+static lib  memcount.a
+change dir to  /bench
+```
+
+### build the lo wc program
+
+```shell
+lo build runtime wc
+```
+
+```shell
+create builtins
+create main header
+compile builtins
+compile main.cc
+compile lo.cc
+link runtime 
+create  lib/core/core.cc
+change dir to  lib/core
+compile core.cc with g++
+static lib  core.a
+change dir to  /bench
+create  lib/memcount/memcount.cc
+change dir to  lib/memcount
+compile memcount.cc with g++
+static lib  memcount.a
+change dir to  /bench
+```
+
+### build the count-go program
+
+```shell
+GOAMD64=v2 go build count-go.go
+```
+
+### build the wc-go program
+
+```shell
+GOAMD64=v2 go build wc-go.go
+```
+
+### build the C count program
+
+```shell
+gcc -D_GNU_SOURCE -std=c99 -static -s -O3 -o count count.c -march=native -mtune=native
+```
+
+### build the C wc program
+
+```shell
+gcc -D_GNU_SOURCE -std=c99 -static -s -O3 -o wc wc.c -march=native -mtune=native
+```
+
+### build the C shared library
+
+```shell
+gcc -fPIC -D_GNU_SOURCE -std=c99 -shared -O3 -o linecount.so linecount.c -march=native -mtune=native
+```
+
+### compile the Node-API bindings
+
+```shell
+node-gyp configure
+node-gyp build
+```
+
+### install sbffi npm module
+
+```shell
+npm install sbffi
+```
+
+### install koffi npm module
+
+```shell
+npm install koffi
+```
+
+### install ffi-rs npm module
+
+```shell
+npm install ffi-rs
+```
+
+## dump the system information
+
+### dump cpu info
+
+### dump memory info
+
+### dump kernel, os and glibc info
+
+### dump runtime versions
+
+
+## running the micro benches
+
+### create a 128 byte test file
+
+```shell
+lo create_test_file.js /dev/shm/test.log 128
+```
+
+this benchmark tests the raw processing speed for finding the line count in the
+same buffer repeatedly. as with all the benchmarks in this series, this is
+not designed to emulate a real world scenario, but to find differences in 
+overhead introduced by various approaches and runtimes.
+
+we will run for sizes from 128 up to 2MB. we won't ever be parsing chunks of a
+file bigger than 2MB on any of the benchmarks so we don't need to test any sizes
+bigger than that here.
+
+```shell
+lo micro-lo.js
+```
+
+
+## running the count benches
+
+
+## running the wc benches
+
+
 do a bench just on a buffer
 
 uname -a

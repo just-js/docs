@@ -58,7 +58,34 @@ napi_value CountAvx(napi_env env, napi_callback_info args) {
     napi_get_value_int32(env, argv[1], &c);
     napi_get_value_uint32(env, argv[2], &n);
     size_t line_count = memcount_avx2(data, c, n);
-    napi_create_int32(env, line_count, &result);
+    napi_create_uint32(env, line_count, &result);
+    return result;
+}
+
+napi_value CountAvxMin(napi_env env, napi_callback_info args) {
+    size_t argc = 3;
+    napi_value argv[3];
+    napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
+    if (argc < 3) {
+      napi_throw_type_error(env, nullptr, "Expected three arguments");
+      return nullptr;
+    }
+    size_t len = 0;
+    void* data = nullptr;
+    napi_typedarray_type tp;
+    napi_status status;
+    int c = 0;
+    uint32_t n = 0;
+    napi_value result;
+    status = napi_get_typedarray_info(env, argv[0], &tp, &len, &data, 0, 0);
+    if (status != napi_ok) {
+      napi_throw_type_error(env, nullptr, "Expected 1st argument to be a TypedArray");
+      return nullptr;
+    }
+    napi_get_value_int32(env, argv[1], &c);
+    napi_get_value_uint32(env, argv[2], &n);
+    size_t line_count = memcount_avx2(data, c, n);
+    napi_create_uint32(env, line_count, &result);
     return result;
 }
 
@@ -75,6 +102,12 @@ napi_value Init(napi_env env, napi_value exports) {
     status = napi_create_function(env, nullptr, 0, CountAvx, nullptr, &count_fn);
     if (status != napi_ok) return NULL;
     status = napi_set_named_property(env, exports, "count_avx", count_fn);
+    if (status != napi_ok) return NULL;
+
+    napi_value count_min_fn;
+    status = napi_create_function(env, nullptr, 0, CountAvxMin, nullptr, &count_min_fn);
+    if (status != napi_ok) return NULL;
+    status = napi_set_named_property(env, exports, "count_avx_min", count_min_fn);
     if (status != napi_ok) return NULL;
 
     napi_value test_fn;
