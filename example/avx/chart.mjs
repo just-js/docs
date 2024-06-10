@@ -33,14 +33,53 @@ data.sort((a, b) => {
 const max = Math.max(...data.map(v => v.nanos))
 const min = Math.min(...data.map(v => v.nanos))
 //const f = '⬜'
-const f = '💩'
+//const f = '💩'
+//const f = '👾'
+//const f = '🤖'
+//const f = '🐞'
+//const f = '🚨'
+//const f = '⭐'
+//const f = '⚡'
+//const f = '🔥'
+//const f = '✨'
+//const f = '🎗'
+//const f = '🏆'
+//const f = '👑'
+//const f = '💎'
+//const f = '🔔'
+//const f = '🪙'
+//const f = '💊'
+//const f = '⚰'
+//const f = '🪦'
+//const f = '⚠'
+//const f = '☢'
+//const f = '⏹'
+//const f = '🔅'
+//const f = '🟠'
+//const f = '🟡'
+//const f = '🔴'
+//const f = '🟢'
+//const f = '🔵'
+//const f = '🟣'
+//const f = '🟥'
+//const f = '🔶'
+//const f = '💀'
+const dots = ['🟢', '🟡', '🟠', '🔴']
 console.log('')
-console.log(`${AC}${'name'.padEnd(20, ' ')}${AD} | ${AC}${'nanos'.padStart(10, ' ')}${AD} | ${AC}${'%'.padStart(10, ' ')}${AD} |`)
-console.log('-'.repeat(48))
+console.log(`${AY}${'name'.padEnd(16, ' ')}${AD} | ${AY}${'nanos'.padStart(8, ' ')}${AD} | ${AY}${'%'.padStart(8, ' ')}${AD} |`)
+console.log('-'.repeat(40))
 let best = data[0].nanos
 for (const { name, nanos } of data) {
-  const blocks = Math.floor((nanos / max) * 100)
-  const pc = ((nanos / best) * 100) - 100
-  console.log(`${AM}${name.slice(0, 20).padEnd(20, ' ')}${AD} | ${AY}${nanos.toFixed(2).padStart(10, ' ')}${AD} | ${AY}${pc.toFixed(2).padStart(10, ' ')}${AD} | ${(new Array(blocks)).fill(f).join('')}`)
+  const blocks = Math.ceil((nanos / max) * 30)
+  const pc = ((nanos / best) * 100)
+  let f = dots[0]
+  if (pc > 1000) {
+    f = dots[3]
+  } else if (pc > 500) {
+    f = dots[2]
+  } else if (pc > 100) {
+    f = dots[1]
+  }
+  console.log(`${AM}${name.slice(0, 16).padEnd(16, ' ')}${AD} | ${AD}${nanos.toFixed(2).padStart(8, ' ')}${AD} | ${AG}${pc.toFixed(2).padStart(8, ' ')}${AD} | ${(new Array(blocks)).fill(f).join('')}`)
 }
 console.log('')
