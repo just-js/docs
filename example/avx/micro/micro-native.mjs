@@ -1,5 +1,4 @@
 import { Bench } from './lib/bench.mjs'
-import { openSync, readSync, closeSync } from 'node:fs'
 
 function on_chunk (chunk, length = chunk.length) {
   let pos = 0

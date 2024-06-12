@@ -1,6 +1,6 @@
 #include <smmintrin.h>
 
-size_t memcount_sse2(const void *s, int c, size_t n) {    
+size_t memcount_avx2(const void *s, int c, size_t n) {    
     __m128i cv = _mm_set1_epi8(c), sum = _mm_setzero_si128(), acr0,acr1,acr2,acr3;
     const char *p,*pe;						    											   
   const char* ss = (const char*)s;		    											   

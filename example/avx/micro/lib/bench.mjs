@@ -202,6 +202,10 @@ if (globalThis.Deno) {
   globalThis.readFileAsBytes = async fn => Deno.readFileSync(fn)
   globalThis.writeFileAsText = async (fn, str) => Deno.writeFileSync(fn, encoder.encode(str))
   globalThis.writeFileAsBytes = async (fn, u8) => Deno.writeFileSync(fn, u8)
+  const fs = await import('node:fs')
+  globalThis.openSync = fs.openSync
+  globalThis.readSync = fs.readSync
+  globalThis.closeSync = fs.closeSync
 } else if (globalThis.lo) {
   globalThis.performance = { now: () => lo.hrtime() / 1000000 }
   globalThis.assert = lo.assert
@@ -210,10 +214,14 @@ if (globalThis.Deno) {
   runtime.version = lo.version.lo
   runtime.v8 = lo.version.v8
   const { readFile, writeFile } = lo.core
+const { close, open, read, O_RDONLY } = lo.core
   globalThis.readFileAsText = async fn => decoder.decode(readFile(fn))
   globalThis.readFileAsBytes = async fn => readFile(fn)
   globalThis.writeFileAsText = async (fn, str) => writeFile(fn, encoder.encode(str))
   globalThis.writeFileAsBytes = async (fn, u8) => writeFile(fn, u8)
+  globalThis.openSync = file_name => open(file_name, O_RDONLY)
+  globalThis.readSync = (fd, buf) => read(fd, buf, buf.length)
+  globalThis.closeSync = fd => close(fd)
 } else if (globalThis.Bun) {
   globalThis.args = Bun.argv.slice(2)
   runtime.name = 'bun'
@@ -222,6 +230,10 @@ if (globalThis.Deno) {
   globalThis.readFileAsBytes = async fn => (await Bun.file(fn).bytes())
   globalThis.writeFileAsText = async (fn, str) => Bun.write(fn, str)
   globalThis.writeFileAsBytes = async (fn, u8) => Bun.write(fn, u8)
+  const fs = await import('node:fs')
+  globalThis.openSync = fs.openSync
+  globalThis.readSync = fs.readSync
+  globalThis.closeSync = fs.closeSync
 } else if (globalThis.process) {
   globalThis.args = process.argv.slice(2)
   runtime.name = 'node'
@@ -232,6 +244,9 @@ if (globalThis.Deno) {
   globalThis.readFileAsBytes = async fn => fs.readFileSync(fn)
   globalThis.writeFileAsText = async (fn, str) => fs.writeFileSync(fn, encoder.encode(str))
   globalThis.writeFileAsBytes = async (fn, u8) => fs.writeFileSync(fn, u8)
+  globalThis.openSync = fs.openSync
+  globalThis.readSync = fs.readSync
+  globalThis.closeSync = fs.closeSync
 }
 
 globalThis.colors = colors
