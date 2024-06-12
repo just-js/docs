@@ -180,6 +180,12 @@ lo micro-lo.js
 ## running the wc benches
 
 
+
+
+https://cs.opensource.google/go/go/+/master:src/internal/bytealg/count_amd64.s;l=164
+https://cs.opensource.google/go/go/+/master:src/bytes/bytes.go;l=61
+
+
 do a bench just on a buffer
 
 uname -a

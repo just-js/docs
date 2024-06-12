@@ -26,7 +26,8 @@ close(fd)
 const expected = count_avx(buf_ptr, 10, bytes)
 const bench = new Bench()
 const runs = parseInt(lo.args[lo.args[0] === 'lo' ? 2 : 1] || 40000000, 10)
-console.log(expected)
+console.log(`bytes ${bytes}`)
+console.log(`lines ${expected}`)
 
 for (let j = 0; j < 10; j++) {
   bench.start('count_avx ffi')

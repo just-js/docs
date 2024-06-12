@@ -11,6 +11,12 @@ wc-lo
 wc-go
 count-lo
 count-go
+count-c
+go.mod
+go.sum
+micro-c
+micro-go
+micro-lo
 .lo
 tlc
 node_modules

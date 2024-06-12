@@ -1,0 +1,5 @@
+[
+  "_malloc",
+  "_free",
+  "_memcount_sse2"
+]

@@ -16,8 +16,8 @@ const runs = parseInt(args[0] || 40000000, 10)
 
 const buf_ptr = getBufferPointer(buf)
 const expected = memcount_avx2(buf_ptr, 10, bytes)
-console.log(expected)
-
+console.log(`bytes ${bytes}`)
+console.log(`lines ${expected}`)
 
 for (let j = 0; j < 10; j++) {
   bench.start('memcount_avx2')
