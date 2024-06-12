@@ -8,9 +8,10 @@ npm install sbffi
 npm install koffi
 npm install ffi-rs
 gcc -D_GNU_SOURCE -std=c99 -static -s -O3 -o micro-c micro.c -march=native -mtune=native
-gcc -fPIC -D_GNU_SOURCE -std=c99 -shared -O3 -o linecount.so linecount.c -march=native -mtune=native
+gcc -fPIC -D_GNU_SOURCE -std=c99 -shared -O3 -o linecount.so linecount-avx.c -march=native -mtune=native
+gcc -fPIC -D_GNU_SOURCE -std=c99 -shared -O3 -o linecount-sse.so linecount-sse.c -march=native -mtune=native
 GOAMD64=v2 go build micro-go.go
-cd wasm && ./build.sh && cd ..
+#cd wasm && ./build.sh && cd ..
 uname -a
 cat /proc/cpuinfo | grep "model name" | head -n 1
 dmidecode --type 17

@@ -1,4 +1,4 @@
-import { Bench } from './lib/bench.mjs'
+import { Bench } from '../lib/bench.mjs'
 
 const { core, assert, ptr } = lo
 const { 
