@@ -1,14 +1,6 @@
 import { Bench } from './lib/bench.mjs'
 import { openSync, readSync, closeSync } from "node:fs"
 
-const wasm = await readFileAsBytes('./wasm/linecount.wasm')
-const mem = new WebAssembly.Memory({ initial: 256, maximum: 256 })
-const mod = new WebAssembly.Module(wasm)
-const instance = new WebAssembly.Instance(mod, { env: { memory: mem }})
-const { malloc, memcount_sse2, _initialize } = instance.exports
-
-_initialize()
-
 function allocate_buffer (size) {
   const address = malloc(size)
   const buf = new Uint8Array(mem.buffer, address, size)
@@ -16,6 +8,12 @@ function allocate_buffer (size) {
   return buf
 }
 
+const wasm = await readFileAsBytes('./wasm/linecount.wasm')
+const mem = new WebAssembly.Memory({ initial: 256, maximum: 256 })
+const mod = new WebAssembly.Module(wasm)
+const instance = new WebAssembly.Instance(mod, { env: { memory: mem }})
+const { malloc, memcount_sse2, _initialize } = instance.exports
+_initialize()
 const file_name = args[1] || '/dev/shm/test.log'
 const len = 2 * 1024 * 1024
 const buf = allocate_buffer(len)
