@@ -1,0 +1,7 @@
+github.com/prometheus/procfs v0.15.1 h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0learggepc=
+github.com/prometheus/procfs v0.15.1/go.mod h1:fB45yRUv8NstnjriLhBQLuOUt+WW4BsoGhij/e3PBqk=
+golang.org/x/sys v0.2.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.20.0 h1:Od9JTbYCk261bKm4M/mw7AklTlFYIa0bIp9BgSm1S8Y=
+golang.org/x/sys v0.20.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+gopkg.ilharper.com/x/isatty v1.1.1 h1:RAg32Pxq/nIK4AVtdm9RBqxsxZZX1uRKRSS21E5SHMk=
+gopkg.ilharper.com/x/isatty v1.1.1/go.mod h1:ofpv77Td5qQO6R1dmDd3oNt8TZdRo+l5gYAMxopRyS0=

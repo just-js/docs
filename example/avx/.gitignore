@@ -12,8 +12,6 @@ wc-go
 count-lo
 count-go
 count-c
-go.mod
-go.sum
 micro-c
 micro-go
 micro-lo
@@ -23,3 +21,4 @@ node_modules
 build
 package-lock.json
 package.json
+scratch
