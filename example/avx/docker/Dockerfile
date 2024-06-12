@@ -57,8 +57,8 @@ RUN apt install -y cmake
 # for sbffi
 RUN npm install -g prebuild node-addon-api cmake-js
 #RUN go install "github.com/prometheus/procfs@latest"
-RUN go mod init github.com/billywhizz/linecount
-RUN go get github.com/prometheus/procfs
-RUN go get gopkg.ilharper.com/x/isatty
+#RUN go mod init github.com/billywhizz/linecount
+#RUN go get github.com/prometheus/procfs
+#RUN go get gopkg.ilharper.com/x/isatty
 
 CMD ["/bin/bash"]

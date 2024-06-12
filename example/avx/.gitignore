@@ -1,12 +1,10 @@
 avx
-count
 test.log
 *.a
 *.cc
 *.o
 *.so
 lib/core
-wc
 wc-lo
 wc-go
 count-lo
