@@ -7,7 +7,11 @@ const api = {
 }
 
 const decoder = new TextDecoder()
-const preamble = decoder.decode(lo.core.read_file('linecount-avx.c'))
+const preamble = `
+extern "C" {
+${decoder.decode(lo.core.read_file('linecount-avx.c'))}
+}
+`
 const name = 'memcount'
 
 export { name, api, preamble }

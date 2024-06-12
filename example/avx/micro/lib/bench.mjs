@@ -172,7 +172,7 @@ class Bench {
     this.#start = performance.now()
   }
 
-  end (count = 0) {
+  end (count = 0, size = 0) {
     this.#end = performance.now()
     const elapsed = this.#end - this.#start
     const nanos = Math.floor(elapsed * 1000000)
@@ -186,8 +186,14 @@ class Bench {
     const total = usr + sys
     const rate_pc = Math.ceil(rate / (total / 100))
     const ns_iter = Math.floor((nanos / count) * 100) / 100
-    if (this.#display) console.log(`${AM}${this.#name.trim().padEnd(this.#name_width, ' ')}${AD} ${AY}time${AD} ${Math.floor(elapsed).toString().padStart(8, ' ')} ${AY}rate${AD} ${rate.toString().padStart(10, ' ')} ${AM}rate/core${AD} ${rate_pc.toString().padStart(10, ' ')} ${AG}ns/iter${AD} ${ns_iter.toFixed(2).padStart(12, ' ')} ${AG}rss${AD} ${rss.toString().padStart(8, ' ')} ${AG}usr${AD} ${usr.toFixed(2).padStart(6, ' ')} ${AR}sys${AD} ${sys.toFixed(2).padStart(6, ' ')} ${AY}tot${AD} ${total.toFixed(2).padStart(6, ' ')}`)
-    return { name: this.#name.trim(), count, elapsed, rate, nanos, rss, runtime, usr, sys, rate_pc, ns_iter }
+    if (this.#display) {
+      if (size) {
+        console.log(`${AM}${this.#name.trim().padEnd(this.#name_width, ' ')}${AD} ${AY}time${AD} ${Math.floor(elapsed).toString().padStart(8, ' ')} ${AY}rate${AD} ${rate.toString().padStart(10, ' ')} ${AM}rate/core${AD} ${rate_pc.toString().padStart(10, ' ')} ${AG}ns/iter${AD} ${ns_iter.toFixed(2).padStart(12, ' ')} ${AG}rss${AD} ${rss.toString().padStart(8, ' ')} ${AG}usr${AD} ${usr.toFixed(2).padStart(6, ' ')} ${AR}sys${AD} ${sys.toFixed(2).padStart(6, ' ')} ${AY}tot${AD} ${total.toFixed(2).padStart(6, ' ')} ${AG}thru${AD} ${to_size_string(rate_pc * size).padStart(12, ' ')}`)
+      } else {
+        console.log(`${AM}${this.#name.trim().padEnd(this.#name_width, ' ')}${AD} ${AY}time${AD} ${Math.floor(elapsed).toString().padStart(8, ' ')} ${AY}rate${AD} ${rate.toString().padStart(10, ' ')} ${AM}rate/core${AD} ${rate_pc.toString().padStart(10, ' ')} ${AG}ns/iter${AD} ${ns_iter.toFixed(2).padStart(12, ' ')} ${AG}rss${AD} ${rss.toString().padStart(8, ' ')} ${AG}usr${AD} ${usr.toFixed(2).padStart(6, ' ')} ${AR}sys${AD} ${sys.toFixed(2).padStart(6, ' ')} ${AY}tot${AD} ${total.toFixed(2).padStart(6, ' ')}`)
+      }
+    }
+    return { name: this.#name.trim(), count, elapsed, rate, nanos, rss, runtime, usr, sys, rate_pc, ns_iter, seconds }
   }
 }
 

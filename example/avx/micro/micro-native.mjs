@@ -54,18 +54,14 @@ console.log(`lines ${expected}`)
 function benchmark (fn, name = fn.name) {
   let bench = new Bench(false)
   let runs = 100
-  while (1) {
+  let seconds = 0
+  while (seconds < 1) {
+    runs *= 2
     bench.start(name)
     for (let i = 0; i < runs; i++) {
       assert(fn() === expected)
     }
-    const { rate, elapsed } = bench.end(runs)
-    if (elapsed >= 1000) {
-      runs = rate
-      break
-    } else {
-      runs *=2
-    }
+    seconds = bench.end(runs).seconds
   }
   bench = new Bench()
   for (let j = 0; j < 10; j++) {
@@ -73,7 +69,7 @@ function benchmark (fn, name = fn.name) {
     for (let i = 0; i < runs; i++) {
       assert(fn() === expected)
     }
-    bench.end(runs)
+    bench.end(runs, bytes)
   }
 }
 

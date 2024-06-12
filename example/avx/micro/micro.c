@@ -107,6 +107,23 @@ int read_file(const char *filename)
   return bytes;
 }
 
+char* to_size_string (unsigned long bytes, char *out) {
+  if (bytes < 1000) {
+    snprintf(out, 1024, "% 8lu Bps\0", bytes);
+    return out;
+  }
+  if (bytes < 1000 * 1000) {
+    snprintf(out, 1024, "% 7.2f KBps\0", (float)bytes / 1000);
+    return out;
+  }
+  if (bytes < 1000 * 1000 * 1000) {
+    snprintf(out, 1024, "% 7.2f MBps\0", (float)bytes / (1000 * 1000));
+    return out;
+  }
+  snprintf(out, 1024, "% 7.2f GBps\0", (float)bytes / (1000 * 1000 * 1000));
+  return out;
+}
+
 int main(int argc, char **argv)
 {
   char *filename = "/dev/shm/test.log";
@@ -115,7 +132,7 @@ int main(int argc, char **argv)
   char* AG = isatty(STDOUT_FILENO) ? _AG : "";
   char* AY = isatty(STDOUT_FILENO) ? _AY : "";
   char* AM = isatty(STDOUT_FILENO) ? _AM : "";
-  int runs = 40000000;
+  int runs = 10000;
   if (argc > 1) 
     runs = atoi(argv[1]);
   if (argc > 2)
@@ -131,13 +148,27 @@ int main(int argc, char **argv)
   unsigned long sys = 0;
   unsigned long last_usr = 0;
   unsigned long last_sys = 0;
+  float seconds = 0.0;
+  while (seconds < 1.0) {
+    runs *= 2;
+    uint64_t start = getns();
+    for (int i = 0; i < runs; i++) {
+      assert(memcount_avx2(buf, 10, bytes) == expected);
+    }
+    uint64_t elapsed = getns() - start;
+    seconds = (float)elapsed / 1000000000;
+  }
+  char* out = calloc(1, 1024);
+  process_memory_usage(&rss, &usr, &sys);
+  last_usr = usr;
+  last_sys = sys;
   for (int j = 0; j < 10; j++) {
     uint64_t start = getns();
     for (int i = 0; i < runs; i++) {
       assert(memcount_avx2(buf, 10, bytes) == expected);
     }
     uint64_t elapsed = getns() - start;
-    float seconds = (float)elapsed / 1000000000;
+    seconds = (float)elapsed / 1000000000;
     process_memory_usage(&rss, &usr, &sys);
     float usr_pc = (usr - last_usr) / seconds;
     float sys_pc = (sys - last_sys) / seconds;
@@ -147,6 +178,6 @@ int main(int argc, char **argv)
     float rate = (float)runs / seconds;
     float rate_pc = (float)rate / (tot_pc / 100.0);
     float ns_iter = (float)elapsed / runs;
-    fprintf(stderr, "%s%-20s%s %stime%s %8lu %srate%s %10lu %srate/core%s %10lu %sns/iter%s %12.2f %srss%s % 8lu %susr%s %6.2f %ssys%s %6.2f %stot%s %6.2f\n", AM, "avxcountu3", AD, AY, AD, elapsed / 1000000, AY, AD, (unsigned long)rate, AM, AD, (unsigned long)rate_pc, AG, AD, ns_iter, AG, AD, rss, AG, AD, usr_pc, AR, AD, sys_pc, AY, AD, tot_pc);
+    fprintf(stdout, "%s%-20s%s %stime%s %8lu %srate%s %10lu %srate/core%s %10lu %sns/iter%s %12.2f %srss%s % 8lu %susr%s %6.2f %ssys%s %6.2f %stot%s %6.2f %sthru%s %s\n", AM, "avxcountu3", AD, AY, AD, elapsed / 1000000, AY, AD, (unsigned long)rate, AM, AD, (unsigned long)rate_pc, AG, AD, ns_iter, AG, AD, rss, AG, AD, usr_pc, AR, AD, sys_pc, AY, AD, tot_pc, AG, AD, to_size_string(bytes * rate_pc, out));
   }
 }

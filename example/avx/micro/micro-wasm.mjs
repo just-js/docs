@@ -20,16 +20,28 @@ const buf = allocate_buffer(len)
 const fd = openSync(file_name)
 const bytes = readSync(fd, buf)
 closeSync(fd)
-const bench = new Bench()
-const runs = parseInt(args[0] || 40000000, 10)
+//const runs = parseInt(args[0] || 40000000, 10)
+let runs = 10000
 const expected = memcount_sse2(buf.addr, 10, bytes)
 console.log(`bytes ${bytes}`)
 console.log(`lines ${expected}`)
 
-for (let j = 0; j < 10; j++) {
-  bench.start('count_avx')
+let bench = new Bench(false)
+let seconds = 0
+while (seconds < 1) {
+  runs *= 2
+  bench.start('warmup')
   for (let i = 0; i < runs; i++) {
     assert(memcount_sse2(buf.addr, 10, bytes) === expected)
   }
-  bench.end(runs)
+  seconds = bench.end(runs).seconds
+}
+
+bench = new Bench()
+for (let j = 0; j < 10; j++) {
+  bench.start('memcount_sse2')
+  for (let i = 0; i < runs; i++) {
+    assert(memcount_sse2(buf.addr, 10, bytes) === expected)
+  }
+  bench.end(runs, bytes)
 }

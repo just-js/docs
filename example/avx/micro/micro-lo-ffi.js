@@ -9,6 +9,7 @@ const {
 const memory_flags = MAP_ANONYMOUS | MAP_PRIVATE
 
 const dlentry = assert(dlopen('./linecount.so', RTLD_NOW))
+//const dlentry = assert(dlopen('./lib/memcount/memcount.so', RTLD_NOW))
 const count_avx = bind(assert(dlsym(dlentry, 'memcount_avx2')), 'u32', ['pointer', 'i32', 'u32'])
 
 function create_buffer (size, prot = PROT_READ | PROT_WRITE) {
@@ -24,15 +25,27 @@ const fd = open(file_name, O_RDONLY)
 const bytes = read2(fd, buf_ptr, len)
 close(fd)
 const expected = count_avx(buf_ptr, 10, bytes)
-const bench = new Bench()
-const runs = parseInt(lo.args[lo.args[0] === 'lo' ? 2 : 1] || 40000000, 10)
+//const runs = parseInt(lo.args[lo.args[0] === 'lo' ? 2 : 1] || 40000000, 10)
+let runs = 10000
 console.log(`bytes ${bytes}`)
 console.log(`lines ${expected}`)
 
-for (let j = 0; j < 10; j++) {
-  bench.start('count_avx ffi')
+let bench = new Bench(false)
+let seconds = 0
+while (seconds < 1) {
+  runs *= 2
+  bench.start('warmup')
   for (let i = 0; i < runs; i++) {
     assert(count_avx(buf_ptr, 10, bytes) === expected)
   }
-  bench.end(runs)
+  seconds = bench.end(runs).seconds
+}
+
+bench = new Bench()
+for (let j = 0; j < 10; j++) {
+  bench.start('count_avx')
+  for (let i = 0; i < runs; i++) {
+    assert(count_avx(buf_ptr, 10, bytes) === expected)
+  }
+  bench.end(runs, bytes)
 }

@@ -25,31 +25,31 @@ deno --version
 node --version
 go version
 lo create_test_file.js /dev/shm/test.log 64
-./micro-c
-./micro-go
-lo micro-lo.js
-lo micro-lo-ffi.js
-lo micro-lo-wasm.js
-lo micro-native.mjs
-bun micro-bun-ffi.js
-bun micro-node-koffi.mjs
-bun micro-node-sbffi.mjs
-bun micro-wasm.mjs
-bun micro-napi.mjs
-bun micro-napi-min.mjs
-bun micro-native.mjs
-node micro-node-koffi.mjs
-node micro-node-sbffi.mjs
-node micro-wasm.mjs
-node micro-napi.mjs
-node micro-napi-min.mjs
-node micro-native.mjs
-deno run -A --unstable-ffi micro-deno-ffi.js
-deno run -A micro-node-sbffi.mjs
-deno run -A micro-wasm.mjs
-deno run -A micro-napi.mjs
-deno run -A micro-napi-min.mjs
-deno run -A micro-native.mjs
+#./micro-c
+#./micro-go
+#lo micro-lo.js
+#lo micro-lo-ffi.js
+#lo micro-lo-wasm.js
+#lo micro-native.mjs
+#bun micro-bun-ffi.js
+#bun micro-node-koffi.mjs
+#bun micro-node-sbffi.mjs
+#bun micro-wasm.mjs
+#bun micro-napi.mjs
+#bun micro-napi-min.mjs
+#bun micro-native.mjs
+#node micro-node-koffi.mjs
+#node micro-node-sbffi.mjs
+#node micro-wasm.mjs
+#node micro-napi.mjs
+#node micro-napi-min.mjs
+#node micro-native.mjs
+#deno run -A --unstable-ffi micro-deno-ffi.js
+#deno run -A micro-node-sbffi.mjs
+#deno run -A micro-wasm.mjs
+#deno run -A micro-napi.mjs
+#deno run -A micro-napi-min.mjs
+#deno run -A micro-native.mjs
 #node micro-node-ffirs.mjs
 #bun micro-node-ffirs.mjs
 #deno run -A micro-node-ffirs.mjs
