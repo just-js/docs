@@ -1,7 +1,9 @@
-function is_a_tty () {
-  if (globalThis.Deno) return Deno.isatty(1)
-  if (globalThis.lo) return lo.core.isatty(1)
-  return process.stdout.isTTY
+function is_a_tty (fd = 1) {
+  if (globalThis.Deno) return Deno.isatty(fd)
+  if (globalThis.lo) return lo.core.isatty(fd)
+  if (fd === 1) return process.stdout.isTTY 
+  if (fd === 2) return process.stderr.isTTY 
+  return process.stdin.isTTY
 }
 
 const isatty = is_a_tty()
@@ -212,6 +214,7 @@ if (globalThis.Deno) {
   globalThis.openSync = fs.openSync
   globalThis.readSync = fs.readSync
   globalThis.closeSync = fs.closeSync
+  globalThis.readFileSync = fs.readFileSync
 } else if (globalThis.lo) {
   globalThis.performance = { now: () => lo.hrtime() / 1000000 }
   globalThis.assert = lo.assert
@@ -220,7 +223,7 @@ if (globalThis.Deno) {
   runtime.version = lo.version.lo
   runtime.v8 = lo.version.v8
   const { readFile, writeFile } = lo.core
-const { close, open, read, O_RDONLY } = lo.core
+  const { close, open, read, O_RDONLY } = lo.core
   globalThis.readFileAsText = async fn => decoder.decode(readFile(fn))
   globalThis.readFileAsBytes = async fn => readFile(fn)
   globalThis.writeFileAsText = async (fn, str) => writeFile(fn, encoder.encode(str))
@@ -228,6 +231,7 @@ const { close, open, read, O_RDONLY } = lo.core
   globalThis.openSync = file_name => open(file_name, O_RDONLY)
   globalThis.readSync = (fd, buf) => read(fd, buf, buf.length)
   globalThis.closeSync = fd => close(fd)
+  globalThis.readFileSync = readFile
 } else if (globalThis.Bun) {
   globalThis.args = Bun.argv.slice(2)
   runtime.name = 'bun'
@@ -240,6 +244,7 @@ const { close, open, read, O_RDONLY } = lo.core
   globalThis.openSync = fs.openSync
   globalThis.readSync = fs.readSync
   globalThis.closeSync = fs.closeSync
+  globalThis.readFileSync = fs.readFileSync
 } else if (globalThis.process) {
   globalThis.args = process.argv.slice(2)
   runtime.name = 'node'
@@ -253,6 +258,7 @@ const { close, open, read, O_RDONLY } = lo.core
   globalThis.openSync = fs.openSync
   globalThis.readSync = fs.readSync
   globalThis.closeSync = fs.closeSync
+  globalThis.readFileSync = fs.readFileSync
 }
 
 globalThis.colors = colors
@@ -297,5 +303,5 @@ const measure = {
 
 export { 
   pad, formatNanos, colors, run, runAsync, Bench, mem, runtime, to_size_string, 
-  Stats, cputime, measure 
+  Stats, cputime, measure, is_a_tty, cpu_usage, memory_usage
 }
