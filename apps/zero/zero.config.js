@@ -2,7 +2,7 @@ const bindings = []
 const libs = []
 const embeds = []
 const target = 'zero' 
-const link_type = '-rdynamic -s'
+const link_type = '-static'
 const opt = '-O3 -march=native -mtune=native'
 const v8_opts = {
   v8_cleanup: 0, v8_threads: 1, on_exit: 0,
