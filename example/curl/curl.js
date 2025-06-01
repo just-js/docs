@@ -20,8 +20,8 @@ const handle = assert(dlopen(`libcurl.${core.os === 'mac' ? 'dylib': 'so'}`, 1))
 
 const curl_global_init = bind(assert(dlsym(handle, 'curl_global_init')), 
   'i32', ['u32'])
-const curl_easy_init = wrap(new Uint32Array(2), bind(assert(dlsym(handle, 
-  'curl_easy_init')), 'pointer', []), 0)
+const curl_easy_init = bind(assert(dlsym(handle, 
+  'curl_easy_init')), 'pointer', [])
 const curl_easy_setopt = bind(assert(dlsym(handle, 'curl_easy_setopt')), 'i32', 
   ['pointer', 'u32', 'string'])
 const curl_easy_setopt2 = bind(assert(dlsym(handle, 'curl_easy_setopt')), 'i32', 
